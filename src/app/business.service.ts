@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 export class BusinessService {
 
   uri = 'http://localhost:4000/business';
+  versionuri = 'http://localhost:4000/getversion';
 
   constructor(private http: HttpClient) { }
 
@@ -24,6 +25,12 @@ export class BusinessService {
     return this
            .http
            .get(`${this.uri}`);
+  }
+
+  getVersion() {
+    return this
+           .http
+           .get(`${this.versionuri}`);
   }
 
   editBusiness(id) {

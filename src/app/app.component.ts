@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {SlimLoadingBarService} from 'ng2-slim-loading-bar';
+import { BusinessService } from '../app/business.service';
+
 import { NavigationCancel,
         Event,
         NavigationEnd,
@@ -12,11 +14,24 @@ import { NavigationCancel,
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
+
+  
+
   title = 'angular7crud';
-  constructor(private _loadingBar: SlimLoadingBarService, private _router: Router) {
+  version;
+  constructor(private _loadingBar: SlimLoadingBarService, private _router: Router,private bs: BusinessService) {
     this._router.events.subscribe((event: Event) => {
       this.navigationInterceptor(event);
+    });
+  }
+
+  ngOnInit() {
+    this.bs
+      .getVersion()
+      .subscribe((data) => {
+        this.version = data;
+        console.log(this.version)
     });
   }
   private navigationInterceptor(event: Event): void {
