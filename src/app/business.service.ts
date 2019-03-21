@@ -6,8 +6,8 @@ import { HttpClient } from '@angular/common/http';
 })
 export class BusinessService {
 
-  uri = 'http://localhost:4000/business';
-  versionuri = 'http://localhost:4000/getversion';
+  uri = '/business';
+  versionuri = '/getversion';
 
   constructor(private http: HttpClient) { }
 

@@ -104,7 +104,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /**
- * @license Angular v7.0.4
+ * @license Angular v7.0.2
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -5764,7 +5764,7 @@ function isPlatformWorkerUi(platformId) {
 /**
  * @publicApi
  */
-var VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["Version"]('7.0.4');
+var VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["Version"]('7.0.2');
 
 /**
  * @license
@@ -5993,7 +5993,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm5/common.js");
 /**
- * @license Angular v7.0.4
+ * @license Angular v7.0.2
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -8212,7 +8212,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "R3BoundTarget", function() { return R3BoundTarget; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /**
- * @license Angular v7.0.4
+ * @license Angular v7.0.2
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -15879,8 +15879,8 @@ var Token = /** @class */ (function () {
     };
     Token.prototype.isNumber = function () { return this.type == TokenType.Number; };
     Token.prototype.isString = function () { return this.type == TokenType.String; };
-    Token.prototype.isOperator = function (operator) {
-        return this.type == TokenType.Operator && this.strValue == operator;
+    Token.prototype.isOperator = function (operater) {
+        return this.type == TokenType.Operator && this.strValue == operater;
     };
     Token.prototype.isIdentifier = function () { return this.type == TokenType.Identifier; };
     Token.prototype.isKeyword = function () { return this.type == TokenType.Keyword; };
@@ -21859,7 +21859,7 @@ function publishFacade(global) {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-var VERSION$1 = new Version('7.0.4');
+var VERSION$1 = new Version('7.0.2');
 
 /**
  * @license
@@ -34548,7 +34548,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
 /**
- * @license Angular v7.0.4
+ * @license Angular v7.0.2
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -46836,6 +46836,89 @@ var Directive = makeDecorator('Directive', function (dir) {
 /**
  * Component decorator and metadata.
  *
+ * @usageNotes
+ *
+ * ### Using animations
+ *
+ * The following snippet shows an animation trigger in a component's
+ * metadata. The trigger is attached to an element in the component's
+ * template, using "@_trigger_name_", and a state expression that is evaluated
+ * at run time to determine whether the animation should start.
+ *
+ * ```typescript
+ * @Component({
+ *   selector: 'animation-cmp',
+ *   templateUrl: 'animation-cmp.html',
+ *   animations: [
+ *     trigger('myTriggerName', [
+ *       state('on', style({ opacity: 1 }),
+ *       state('off', style({ opacity: 0 }),
+ *       transition('on => off', [
+ *         animate("1s")
+ *       ])
+ *     ])
+ *   ]
+ * })
+ * ```
+ *
+ * ```html
+ * <!-- animation-cmp.html -->
+ * <div @myTriggerName="expression">...</div>
+ * ```
+ *
+ * ### Preserving whitespace
+ *
+ * Removing whitespace can greatly reduce AOT-generated code size, and speed up view creation.
+ * As of Angular 6, default for `preserveWhitespaces` is false (whitespace is removed).
+ * To change the default setting for all components in your application, set
+ * the `preserveWhitespaces` option of the AOT compiler.
+ *
+ * Current implementation removes whitespace characters as follows:
+ * - Trims all whitespaces at the beginning and the end of a template.
+ * - Removes whitespace-only text nodes. For example,
+ * `<button>Action 1</button>  <button>Action 2</button>` becomes
+ * `<button>Action 1</button><button>Action 2</button>`.
+ * - Replaces a series of whitespace characters in text nodes with a single space.
+ * For example, `<span>\n some text\n</span>` becomes `<span> some text </span>`.
+ * - Does NOT alter text nodes inside HTML tags such as `<pre>` or `<textarea>`,
+ * where whitespace characters are significant.
+ *
+ * Note that these transformations can influence DOM nodes layout, although impact
+ * should be minimal.
+ *
+ * You can override the default behavior to preserve whitespace characters
+ * in certain fragments of a template. For example, you can exclude an entire
+ * DOM sub-tree by using the `ngPreserveWhitespaces` attribute:
+ *
+ * ```html
+ * <div ngPreserveWhitespaces>
+ *     whitespaces are preserved here
+ *     <span>    and here </span>
+ * </div>
+ * ```
+ *
+ * You can force a single space to be preserved in a text node by using `&ngsp;`,
+ * which is replaced with a space character by Angular's template
+ * compiler:
+ *
+ * ```html
+ * <a>Spaces</a>&ngsp;<a>between</a>&ngsp;<a>links.</a>
+ * <!-->compiled to be equivalent to:</>
+ *  <a>Spaces</a> <a>between</a> <a>links.</a>
+ * ```
+ *
+ * Note that sequences of `&ngsp;` are still collapsed to just one space character when
+ * the `preserveWhitespaces` option is set to `false`.
+ *
+ * ```html
+ * <a>before</a>&ngsp;&ngsp;&ngsp;<a>after</a>
+ * <!-->compiled to be equivalent to:</>
+ *  <a>Spaces</a> <a>between</a> <a>links.</a>
+ * ```
+ *
+ * To preserve sequences of whitespace characters, use the
+ * `ngPreserveWhitespaces` attribute.
+ *
  * @Annotation
  * @publicApi
  */
@@ -47006,7 +47089,7 @@ var Version = /** @class */ (function () {
 /**
  * @publicApi
  */
-var VERSION = new Version('7.0.4');
+var VERSION = new Version('7.0.2');
 
 /**
  * @license
@@ -55823,7 +55906,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
 /**
- * @license Angular v7.0.4
+ * @license Angular v7.0.2
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -56470,70 +56553,31 @@ var CHECKBOX_VALUE_ACCESSOR = {
     multi: true,
 };
 /**
- * @description
- * A `ControlValueAccessor` for writing a value and listening to changes on a checkbox input
- * element.
+ * The accessor for writing a value and listening to changes on a checkbox input element.
  *
  * @usageNotes
- *
- * ### Using a checkbox with a reactive form.
- *
- * The following example shows how to use a checkbox with a reactive form.
- *
- * ```ts
- * const rememberLoginControl = new FormControl();
- * ```
+ * ### Example
  *
  * ```
- * <input type="checkbox" [formControl]="rememberLoginControl">
+ * <input type="checkbox" name="rememberLogin" ngModel>
  * ```
  *
- * @ngModule ReactiveFormsModule
  * @ngModule FormsModule
+ * @ngModule ReactiveFormsModule
  * @publicApi
  */
 var CheckboxControlValueAccessor = /** @class */ (function () {
     function CheckboxControlValueAccessor(_renderer, _elementRef) {
         this._renderer = _renderer;
         this._elementRef = _elementRef;
-        /**
-         * @description
-         * The registered callback function called when a change event occurs on the input element.
-         */
         this.onChange = function (_) { };
-        /**
-         * @description
-         * The registered callback function called when a blur event occurs on the input element.
-         */
         this.onTouched = function () { };
     }
-    /**
-     * Sets the "checked" property on the input element.
-     *
-     * @param value The checked value
-     */
     CheckboxControlValueAccessor.prototype.writeValue = function (value) {
         this._renderer.setProperty(this._elementRef.nativeElement, 'checked', value);
     };
-    /**
-     * @description
-     * Registers a function called when the control value changes.
-     *
-     * @param fn The callback function
-     */
     CheckboxControlValueAccessor.prototype.registerOnChange = function (fn) { this.onChange = fn; };
-    /**
-     * @description
-     * Registers a function called when the control is touched.
-     *
-     * @param fn The callback function
-     */
     CheckboxControlValueAccessor.prototype.registerOnTouched = function (fn) { this.onTouched = fn; };
-    /**
-     * Sets the "disabled" property on the input element.
-     *
-     * @param isDisabled The disabled value
-     */
     CheckboxControlValueAccessor.prototype.setDisabledState = function (isDisabled) {
         this._renderer.setProperty(this._elementRef.nativeElement, 'disabled', isDisabled);
     };
@@ -56574,28 +56618,18 @@ function _isAndroid() {
  */
 var COMPOSITION_BUFFER_MODE = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["InjectionToken"]('CompositionEventMode');
 /**
- * @description
- * The default `ControlValueAccessor` for writing a value and listening to changes on input
- * elements. The accessor is used by the `FormControlDirective`, `FormControlName`, and
- * `NgModel` directives.
+ * The default accessor for writing a value and listening to changes that is used by the
+ * `NgModel`, `FormControlDirective`, and `FormControlName` directives.
  *
  * @usageNotes
- *
- * ### Using the default value accessor
- *
- * The following example shows how to use an input element that activates the default value accessor
- * (in this case, a text field).
- *
- * ```ts
- * const firstNameControl = new FormControl();
- * ```
+ * ### Example
  *
  * ```
- * <input type="text" [formControl]="firstNameControl">
+ * <input type="text" name="searchQuery" ngModel>
  * ```
  *
- * @ngModule ReactiveFormsModule
  * @ngModule FormsModule
+ * @ngModule ReactiveFormsModule
  * @publicApi
  */
 var DefaultValueAccessor = /** @class */ (function () {
@@ -56603,15 +56637,7 @@ var DefaultValueAccessor = /** @class */ (function () {
         this._renderer = _renderer;
         this._elementRef = _elementRef;
         this._compositionMode = _compositionMode;
-        /**
-         * @description
-         * The registered callback function called when an input event occurs on the input element.
-         */
         this.onChange = function (_) { };
-        /**
-         * @description
-         * The registered callback function called when a blur event occurs on the input element.
-         */
         this.onTouched = function () { };
         /** Whether the user is creating a composition string (IME events). */
         this._composing = false;
@@ -56619,34 +56645,12 @@ var DefaultValueAccessor = /** @class */ (function () {
             this._compositionMode = !_isAndroid();
         }
     }
-    /**
-     * Sets the "value" property on the input element.
-     *
-     * @param value The checked value
-     */
     DefaultValueAccessor.prototype.writeValue = function (value) {
         var normalizedValue = value == null ? '' : value;
         this._renderer.setProperty(this._elementRef.nativeElement, 'value', normalizedValue);
     };
-    /**
-     * @description
-     * Registers a function called when the control value changes.
-     *
-     * @param fn The callback function
-     */
     DefaultValueAccessor.prototype.registerOnChange = function (fn) { this.onChange = fn; };
-    /**
-     * @description
-     * Registers a function called when the control is touched.
-     *
-     * @param fn The callback function
-     */
     DefaultValueAccessor.prototype.registerOnTouched = function (fn) { this.onTouched = fn; };
-    /**
-     * Sets the "disabled" property on the input element.
-     *
-     * @param isDisabled The disabled value
-     */
     DefaultValueAccessor.prototype.setDisabledState = function (isDisabled) {
         this._renderer.setProperty(this._elementRef.nativeElement, 'disabled', isDisabled);
     };
@@ -56720,75 +56724,35 @@ var NUMBER_VALUE_ACCESSOR = {
     multi: true
 };
 /**
- * @description
- * The `ControlValueAccessor` for writing a number value and listening to number input changes.
- * The value accessor is used by the `FormControlDirective`, `FormControlName`, and  `NgModel`
- * directives.
+ * The accessor for writing a number value and listening to changes that is used by the
+ * `NgModel`, `FormControlDirective`, and `FormControlName` directives.
  *
  * @usageNotes
- *
- * ### Using a number input with a reactive form.
- *
- * The following example shows how to use a number input with a reactive form.
- *
- * ```ts
- * const totalCountControl = new FormControl();
- * ```
+ * ### Example
  *
  * ```
- * <input type="number" [formControl]="totalCountControl">
+ * <input type="number" [(ngModel)]="age">
  * ```
  *
- * @ngModule ReactiveFormsModule
  * @ngModule FormsModule
+ * @ngModule ReactiveFormsModule
  */
 var NumberValueAccessor = /** @class */ (function () {
     function NumberValueAccessor(_renderer, _elementRef) {
         this._renderer = _renderer;
         this._elementRef = _elementRef;
-        /**
-         * @description
-         * The registered callback function called when a change or input event occurs on the input
-         * element.
-         */
         this.onChange = function (_) { };
-        /**
-         * @description
-         * The registered callback function called when a blur event occurs on the input element.
-         */
         this.onTouched = function () { };
     }
-    /**
-     * Sets the "value" property on the input element.
-     *
-     * @param value The checked value
-     */
     NumberValueAccessor.prototype.writeValue = function (value) {
         // The value needs to be normalized for IE9, otherwise it is set to 'null' when null
         var normalizedValue = value == null ? '' : value;
         this._renderer.setProperty(this._elementRef.nativeElement, 'value', normalizedValue);
     };
-    /**
-     * @description
-     * Registers a function called when the control value changes.
-     *
-     * @param fn The callback function
-     */
     NumberValueAccessor.prototype.registerOnChange = function (fn) {
         this.onChange = function (value) { fn(value == '' ? null : parseFloat(value)); };
     };
-    /**
-     * @description
-     * Registers a function called when the control is touched.
-     *
-     * @param fn The callback function
-     */
     NumberValueAccessor.prototype.registerOnTouched = function (fn) { this.onTouched = fn; };
-    /**
-     * Sets the "disabled" property on the input element.
-     *
-     * @param isDisabled The disabled value
-     */
     NumberValueAccessor.prototype.setDisabledState = function (isDisabled) {
         this._renderer.setProperty(this._elementRef.nativeElement, 'disabled', isDisabled);
     };
@@ -56899,24 +56863,15 @@ var RADIO_VALUE_ACCESSOR = {
     multi: true
 };
 /**
- * @description
- * Class used by Angular to track radio buttons. For internal use only.
+ * Internal class used by Angular to uncheck radio buttons with the matching name.
  */
 var RadioControlRegistry = /** @class */ (function () {
     function RadioControlRegistry() {
         this._accessors = [];
     }
-    /**
-     * @description
-     * Adds a control to the internal registry. For internal use only.
-     */
     RadioControlRegistry.prototype.add = function (control, accessor) {
         this._accessors.push([control, accessor]);
     };
-    /**
-     * @description
-     * Removes a control from the internal registry. For internal use only.
-     */
     RadioControlRegistry.prototype.remove = function (accessor) {
         for (var i = this._accessors.length - 1; i >= 0; --i) {
             if (this._accessors[i][1] === accessor) {
@@ -56925,10 +56880,6 @@ var RadioControlRegistry = /** @class */ (function () {
             }
         }
     };
-    /**
-     * @description
-     * Selects a radio button. For internal use only.
-     */
     RadioControlRegistry.prototype.select = function (accessor) {
         var _this = this;
         this._accessors.forEach(function (c) {
@@ -56950,22 +56901,32 @@ var RadioControlRegistry = /** @class */ (function () {
 }());
 /**
  * @description
- * The `ControlValueAccessor` for writing radio control values and listening to radio control
- * changes. The value accessor is used by the `FormControlDirective`, `FormControlName`, and
- * `NgModel` directives.
+ *
+ * Writes radio control values and listens to radio control changes.
+ *
+ * Used by `NgModel`, `FormControlDirective`, and `FormControlName`
+ * to keep the view synced with the `FormControl` model.
+ *
+ * If you have imported the `FormsModule` or the `ReactiveFormsModule`, this
+ * value accessor will be active on any radio control that has a form directive. You do
+ * **not** need to add a special selector to activate it.
  *
  * @usageNotes
+ * ### How to use radio buttons with form directives
  *
- * ### Using radio buttons with reactive form directives
+ * To use radio buttons in a template-driven form, you'll want to ensure that radio buttons
+ * in the same group have the same `name` attribute.  Radio buttons with different `name`
+ * attributes do not affect each other.
  *
- * The follow example shows how to use radio buttons in a reactive form. When using radio buttons in
- * a reactive form, radio buttons in the same group should have the same `formControlName`.
- * Providing a `name` attribute is optional.
+ * {@example forms/ts/radioButtons/radio_button_example.ts region='TemplateDriven'}
+ *
+ * When using radio buttons in a reactive form, radio buttons in the same group should have the
+ * same `formControlName`. You can also add a `name` attribute, but it's optional.
  *
  * {@example forms/ts/reactiveRadioButtons/reactive_radio_button_example.ts region='Reactive'}
  *
- * @ngModule ReactiveFormsModule
  * @ngModule FormsModule
+ * @ngModule ReactiveFormsModule
  * @publicApi
  */
 var RadioControlValueAccessor = /** @class */ (function () {
@@ -56974,51 +56935,19 @@ var RadioControlValueAccessor = /** @class */ (function () {
         this._elementRef = _elementRef;
         this._registry = _registry;
         this._injector = _injector;
-        /**
-         * @description
-         * The registered callback function called when a change event occurs on the input element.
-         */
         this.onChange = function () { };
-        /**
-         * @description
-         * The registered callback function called when a blur event occurs on the input element.
-         */
         this.onTouched = function () { };
     }
-    /**
-     * @description
-     * A lifecycle method called when the directive is initialized. For internal use only.
-     *
-     * @param changes A object of key/value pairs for the set of changed inputs.
-     */
     RadioControlValueAccessor.prototype.ngOnInit = function () {
         this._control = this._injector.get(NgControl);
         this._checkName();
         this._registry.add(this._control, this);
     };
-    /**
-     * @description
-     * Lifecycle method called before the directive's instance is destroyed. For internal use only.
-     *
-     * @param changes A object of key/value pairs for the set of changed inputs.
-     */
     RadioControlValueAccessor.prototype.ngOnDestroy = function () { this._registry.remove(this); };
-    /**
-     * @description
-     * Sets the "checked" property value on the radio input element.
-     *
-     * @param value The checked value
-     */
     RadioControlValueAccessor.prototype.writeValue = function (value) {
         this._state = value === this.value;
         this._renderer.setProperty(this._elementRef.nativeElement, 'checked', this._state);
     };
-    /**
-     * @description
-     * Registers a function called when the control value changes.
-     *
-     * @param fn The callback function
-     */
     RadioControlValueAccessor.prototype.registerOnChange = function (fn) {
         var _this = this;
         this._fn = fn;
@@ -57027,24 +56956,8 @@ var RadioControlValueAccessor = /** @class */ (function () {
             _this._registry.select(_this);
         };
     };
-    /**
-     * Sets the "value" on the radio input element and unchecks it.
-     *
-     * @param value
-     */
     RadioControlValueAccessor.prototype.fireUncheck = function (value) { this.writeValue(value); };
-    /**
-     * @description
-     * Registers a function called when the control is touched.
-     *
-     * @param fn The callback function
-     */
     RadioControlValueAccessor.prototype.registerOnTouched = function (fn) { this.onTouched = fn; };
-    /**
-     * Sets the "disabled" property on the input element.
-     *
-     * @param isDisabled The disabled value
-     */
     RadioControlValueAccessor.prototype.setDisabledState = function (isDisabled) {
         this._renderer.setProperty(this._elementRef.nativeElement, 'disabled', isDisabled);
     };
@@ -57095,73 +57008,33 @@ var RANGE_VALUE_ACCESSOR = {
     multi: true
 };
 /**
- * @description
- * The `ControlValueAccessor` for writing a range value and listening to range input changes.
- * The value accessor is used by the `FormControlDirective`, `FormControlName`, and  `NgModel`
- * directives.
+ * The accessor for writing a range value and listening to changes that is used by the
+ * `NgModel`, `FormControlDirective`, and `FormControlName` directives.
  *
  * @usageNotes
- *
- * ### Using a range input with a reactive form
- *
- * The following example shows how to use a range input with a reactive form.
- *
- * ```ts
- * const ageControl = new FormControl();
- * ```
+ * ### Example
  *
  * ```
- * <input type="range" [formControl]="ageControl">
+ * <input type="range" [(ngModel)]="age" >
  * ```
  *
- * @ngModule ReactiveFormsModule
  * @ngModule FormsModule
+ * @ngModule ReactiveFormsModule
  */
 var RangeValueAccessor = /** @class */ (function () {
     function RangeValueAccessor(_renderer, _elementRef) {
         this._renderer = _renderer;
         this._elementRef = _elementRef;
-        /**
-         * @description
-         * The registered callback function called when a change or input event occurs on the input
-         * element.
-         */
         this.onChange = function (_) { };
-        /**
-         * @description
-         * The registered callback function called when a blur event occurs on the input element.
-         */
         this.onTouched = function () { };
     }
-    /**
-     * Sets the "value" property on the input element.
-     *
-     * @param value The checked value
-     */
     RangeValueAccessor.prototype.writeValue = function (value) {
         this._renderer.setProperty(this._elementRef.nativeElement, 'value', parseFloat(value));
     };
-    /**
-     * @description
-     * Registers a function called when the control value changes.
-     *
-     * @param fn The callback function
-     */
     RangeValueAccessor.prototype.registerOnChange = function (fn) {
         this.onChange = function (value) { fn(value == '' ? null : parseFloat(value)); };
     };
-    /**
-     * @description
-     * Registers a function called when the control is touched.
-     *
-     * @param fn The callback function
-     */
     RangeValueAccessor.prototype.registerOnTouched = function (fn) { this.onTouched = fn; };
-    /**
-     * Sets the "disabled" property on the range input element.
-     *
-     * @param isDisabled The disabled value
-     */
     RangeValueAccessor.prototype.setDisabledState = function (isDisabled) {
         this._renderer.setProperty(this._elementRef.nativeElement, 'disabled', isDisabled);
     };
@@ -57254,26 +57127,35 @@ function _extractId(valueString) {
 }
 /**
  * @description
- * The `ControlValueAccessor` for writing select control values and listening to select control
- * changes. The value accessor is used by the `FormControlDirective`, `FormControlName`, and
- * `NgModel` directives.
+ *
+ * Writes values and listens to changes on a select element.
+ *
+ * Used by `NgModel`, `FormControlDirective`, and `FormControlName`
+ * to keep the view synced with the `FormControl` model.
+ *
+ * If you have imported the `FormsModule` or the `ReactiveFormsModule`, this
+ * value accessor will be active on any select control that has a form directive. You do
+ * **not** need to add a special selector to activate it.
  *
  * @usageNotes
- *
- * ### Using select controls in a reactive form
- *
- * The following examples show how to use a select control in a reactive form.
- *
- * {@example forms/ts/reactiveSelectControl/reactive_select_control_example.ts region='Component'}
- *
- * ### Using select controls in a template-driven form
+ * ### How to use select controls with form directives
  *
  * To use a select in a template-driven form, simply add an `ngModel` and a `name`
  * attribute to the main `<select>` tag.
  *
+ * If your option values are simple strings, you can bind to the normal `value` property
+ * on the option.  If your option values happen to be objects (and you'd like to save the
+ * selection in your form as an object), use `ngValue` instead:
+ *
  * {@example forms/ts/selectControl/select_control_example.ts region='Component'}
  *
- * ### Customizing option selection
+ * In reactive forms, you'll also want to add your form directive (`formControlName` or
+ * `formControl`) on the main `<select>` tag. Like in the former example, you have the
+ * choice of binding to the  `value` or `ngValue` property on the select's options.
+ *
+ * {@example forms/ts/reactiveSelectControl/reactive_select_control_example.ts region='Component'}
+ *
+ * ### Caveat: Option selection
  *
  * Angular uses object identity to select option. It's possible for the identities of items
  * to change while the data does not. This can happen, for example, if the items are produced
@@ -57284,12 +57166,10 @@ function _extractId(valueString) {
  * `compareWith` takes a **function** which has two arguments: `option1` and `option2`.
  * If `compareWith` is given, Angular selects option by the return value of the function.
  *
- * ```ts
- * const selectedCountriesControl = new FormControl();
- * ```
+ * ### Syntax
  *
  * ```
- * <select [compareWith]="compareFn"  [formControl]="selectedCountriesControl">
+ * <select [compareWith]="compareFn"  [(ngModel)]="selectedCountries">
  *     <option *ngFor="let country of countries" [ngValue]="country">
  *         {{country.name}}
  *     </option>
@@ -57300,13 +57180,13 @@ function _extractId(valueString) {
  * }
  * ```
  *
- * **Note:** We listen to the 'change' event because 'input' events aren't fired
+ * Note: We listen to the 'change' event because 'input' events aren't fired
  * for selects in Firefox and IE:
  * https://bugzilla.mozilla.org/show_bug.cgi?id=1024350
  * https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/4660045/
  *
- * @ngModule ReactiveFormsModule
  * @ngModule FormsModule
+ * @ngModule ReactiveFormsModule
  * @publicApi
  */
 var SelectControlValueAccessor = /** @class */ (function () {
@@ -57317,24 +57197,11 @@ var SelectControlValueAccessor = /** @class */ (function () {
         this._optionMap = new Map();
         /** @internal */
         this._idCounter = 0;
-        /**
-         * @description
-         * The registered callback function called when a change event occurs on the input element.
-         */
         this.onChange = function (_) { };
-        /**
-         * @description
-         * The registered callback function called when a blur event occurs on the input element.
-         */
         this.onTouched = function () { };
         this._compareWith = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵlooseIdentical"];
     }
     Object.defineProperty(SelectControlValueAccessor.prototype, "compareWith", {
-        /**
-         * @description
-         * Tracks the option comparison algorithm for tracking identities when
-         * checking for changes.
-         */
         set: function (fn) {
             if (typeof fn !== 'function') {
                 throw new Error("compareWith must be a function, but received " + JSON.stringify(fn));
@@ -57344,12 +57211,6 @@ var SelectControlValueAccessor = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    /**
-     * Sets the "value" property on the input element. The "selectedIndex"
-     * property is also set if an ID is provided on the option element.
-     *
-     * @param value The checked value
-     */
     SelectControlValueAccessor.prototype.writeValue = function (value) {
         this.value = value;
         var id = this._getOptionId(value);
@@ -57359,12 +57220,6 @@ var SelectControlValueAccessor = /** @class */ (function () {
         var valueString = _buildValueString(id, value);
         this._renderer.setProperty(this._elementRef.nativeElement, 'value', valueString);
     };
-    /**
-     * @description
-     * Registers a function called when the control value changes.
-     *
-     * @param fn The callback function
-     */
     SelectControlValueAccessor.prototype.registerOnChange = function (fn) {
         var _this = this;
         this.onChange = function (valueString) {
@@ -57372,18 +57227,7 @@ var SelectControlValueAccessor = /** @class */ (function () {
             fn(_this.value);
         };
     };
-    /**
-     * @description
-     * Registers a function called when the control is touched.
-     *
-     * @param fn The callback function
-     */
     SelectControlValueAccessor.prototype.registerOnTouched = function (fn) { this.onTouched = fn; };
-    /**
-     * Sets the "disabled" property on the select input element.
-     *
-     * @param isDisabled The disabled value
-     */
     SelectControlValueAccessor.prototype.setDisabledState = function (isDisabled) {
         this._renderer.setProperty(this._elementRef.nativeElement, 'disabled', isDisabled);
     };
@@ -57430,12 +57274,13 @@ var SelectControlValueAccessor = /** @class */ (function () {
 }());
 /**
  * @description
+ *
  * Marks `<option>` as dynamic, so Angular can be notified when options change.
  *
- * @see `SelectControlValueAccessor`
+ * See docs for `SelectControlValueAccessor` for usage examples.
  *
- * @ngModule ReactiveFormsModule
  * @ngModule FormsModule
+ * @ngModule ReactiveFormsModule
  * @publicApi
  */
 var NgSelectOption = /** @class */ (function () {
@@ -57447,11 +57292,6 @@ var NgSelectOption = /** @class */ (function () {
             this.id = this._select._registerOption();
     }
     Object.defineProperty(NgSelectOption.prototype, "ngValue", {
-        /**
-         * @description
-         * Tracks the value bound to the option element. Unlike the value binding,
-         * ngValue supports binding to objects.
-         */
         set: function (value) {
             if (this._select == null)
                 return;
@@ -57463,11 +57303,6 @@ var NgSelectOption = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(NgSelectOption.prototype, "value", {
-        /**
-         * @description
-         * Tracks simple string values bound to the option element.
-         * For objects, use the `ngValue` input binding.
-         */
         set: function (value) {
             this._setElementValue(value);
             if (this._select)
@@ -57480,10 +57315,6 @@ var NgSelectOption = /** @class */ (function () {
     NgSelectOption.prototype._setElementValue = function (value) {
         this._renderer.setProperty(this._element.nativeElement, 'value', value);
     };
-    /**
-     * @description
-     * Lifecycle method called before the directive's instance is destroyed. For internal use only.
-     */
     NgSelectOption.prototype.ngOnDestroy = function () {
         if (this._select) {
             this._select._optionMap.delete(this.id);
@@ -57534,35 +57365,33 @@ function _extractId$1(valueString) {
     return valueString.split(':')[0];
 }
 /**
- * @description
- * The `ControlValueAccessor` for writing multi-select control values and listening to multi-select control
- * changes. The value accessor is used by the `FormControlDirective`, `FormControlName`, and `NgModel`
- * directives.
- *
- * @see `SelectControlValueAccessor`
+ * The accessor for writing a value and listening to changes on a select element.
  *
  * @usageNotes
+ * ### Caveat: Options selection
  *
- * ### Using a multi-select control
+ * Angular uses object identity to select options. It's possible for the identities of items
+ * to change while the data does not. This can happen, for example, if the items are produced
+ * from an RPC to the server, and that RPC is re-run. Even if the data hasn't changed, the
+ * second response will produce objects with different identities.
  *
- * The follow example shows you how to use a multi-select control with a reactive form.
+ * To customize the default option comparison algorithm, `<select multiple>` supports `compareWith`
+ * input. `compareWith` takes a **function** which has two arguments: `option1` and `option2`.
+ * If `compareWith` is given, Angular selects options by the return value of the function.
  *
- * ```ts
- * const countryControl = new FormControl();
+ * ### Syntax
+ *
  * ```
- *
- * ```
- * <select multiple name="countries" [formControl]="countryControl">
- *   <option *ngFor="let country of countries" [ngValue]="country">
- *     {{ country.name }}
- *   </option>
+ * <select multiple [compareWith]="compareFn"  [(ngModel)]="selectedCountries">
+ *     <option *ngFor="let country of countries" [ngValue]="country">
+ *         {{country.name}}
+ *     </option>
  * </select>
+ *
+ * compareFn(c1: Country, c2: Country): boolean {
+ *     return c1 && c2 ? c1.id === c2.id : c1 === c2;
+ * }
  * ```
- *
- * ### Customizing option selection
- *
- * To customize the default option comparison algorithm, `<select>` supports `compareWith` input.
- * See the `SelectControlValueAccessor` for usage.
  *
  * @ngModule ReactiveFormsModule
  * @ngModule FormsModule
@@ -57576,24 +57405,11 @@ var SelectMultipleControlValueAccessor = /** @class */ (function () {
         this._optionMap = new Map();
         /** @internal */
         this._idCounter = 0;
-        /**
-         * @description
-         * The registered callback function called when a change event occurs on the input element.
-         */
         this.onChange = function (_) { };
-        /**
-         * @description
-         * The registered callback function called when a blur event occurs on the input element.
-         */
         this.onTouched = function () { };
         this._compareWith = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵlooseIdentical"];
     }
     Object.defineProperty(SelectMultipleControlValueAccessor.prototype, "compareWith", {
-        /**
-         * @description
-         * Tracks the option comparison algorithm for tracking identities when
-         * checking for changes.
-         */
         set: function (fn) {
             if (typeof fn !== 'function') {
                 throw new Error("compareWith must be a function, but received " + JSON.stringify(fn));
@@ -57603,13 +57419,6 @@ var SelectMultipleControlValueAccessor = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    /**
-     * @description
-     * Sets the "value" property on one or of more
-     * of the select's options.
-     *
-     * @param value The value
-     */
     SelectMultipleControlValueAccessor.prototype.writeValue = function (value) {
         var _this = this;
         this.value = value;
@@ -57624,13 +57433,6 @@ var SelectMultipleControlValueAccessor = /** @class */ (function () {
         }
         this._optionMap.forEach(optionSelectedStateSetter);
     };
-    /**
-     * @description
-     * Registers a function called when the control value changes
-     * and writes an array of the selected options.
-     *
-     * @param fn The callback function
-     */
     SelectMultipleControlValueAccessor.prototype.registerOnChange = function (fn) {
         var _this = this;
         this.onChange = function (_) {
@@ -57658,18 +57460,7 @@ var SelectMultipleControlValueAccessor = /** @class */ (function () {
             fn(selected);
         };
     };
-    /**
-     * @description
-     * Registers a function called when the control is touched.
-     *
-     * @param fn The callback function
-     */
     SelectMultipleControlValueAccessor.prototype.registerOnTouched = function (fn) { this.onTouched = fn; };
-    /**
-     * Sets the "disabled" property on the select input element.
-     *
-     * @param isDisabled The disabled value
-     */
     SelectMultipleControlValueAccessor.prototype.setDisabledState = function (isDisabled) {
         this._renderer.setProperty(this._elementRef.nativeElement, 'disabled', isDisabled);
     };
@@ -57719,14 +57510,18 @@ var SelectMultipleControlValueAccessor = /** @class */ (function () {
     return SelectMultipleControlValueAccessor;
 }());
 /**
- * @description
  * Marks `<option>` as dynamic, so Angular can be notified when options change.
  *
- * @see `SelectMultipleControlValueAccessor`
+ * @usageNotes
+ * ### Example
  *
- * @ngModule ReactiveFormsModule
+ * ```
+ * <select multiple name="city" ngModel>
+ *   <option *ngFor="let c of cities" [value]="c"></option>
+ * </select>
+ * ```
  * @ngModule FormsModule
- * @publicApi
+ * @ngModule ReactiveFormsModule
  */
 var NgSelectMultipleOption = /** @class */ (function () {
     function NgSelectMultipleOption(_element, _renderer, _select) {
@@ -57738,11 +57533,6 @@ var NgSelectMultipleOption = /** @class */ (function () {
         }
     }
     Object.defineProperty(NgSelectMultipleOption.prototype, "ngValue", {
-        /**
-         * @description
-         * Tracks the value bound to the option element. Unlike the value binding,
-         * ngValue supports binding to objects.
-         */
         set: function (value) {
             if (this._select == null)
                 return;
@@ -57754,11 +57544,6 @@ var NgSelectMultipleOption = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(NgSelectMultipleOption.prototype, "value", {
-        /**
-         * @description
-         * Tracks simple string values bound to the option element.
-         * For objects, use the `ngValue` input binding.
-         */
         set: function (value) {
             if (this._select) {
                 this._value = value;
@@ -57780,10 +57565,6 @@ var NgSelectMultipleOption = /** @class */ (function () {
     NgSelectMultipleOption.prototype._setSelected = function (selected) {
         this._renderer.setProperty(this._element.nativeElement, 'selected', selected);
     };
-    /**
-     * @description
-     * Lifecycle method called before the directive's instance is destroyed. For internal use only.
-     */
     NgSelectMultipleOption.prototype.ngOnDestroy = function () {
         if (this._select) {
             this._select._optionMap.delete(this.id);
@@ -60450,17 +60231,38 @@ var formControlBinding$1 = {
 };
 /**
  * @description
- * * Syncs a standalone `FormControl` instance to a form control element.
  *
- * @see [Reactive Forms Guide](guide/reactive-forms)
- * @see `FormControl`
- * @see `AbstractControl`
+ * Syncs a standalone `FormControl` instance to a form control element.
+ *
+ * This directive ensures that any values written to the `FormControl`
+ * instance programmatically will be written to the DOM element (model -> view). Conversely,
+ * any values written to the DOM element through user input will be reflected in the
+ * `FormControl` instance (view -> model).
  *
  * @usageNotes
+ * Use this directive if you'd like to create and manage a `FormControl` instance directly.
+ * Simply create a `FormControl`, save it to your component class, and pass it into the
+ * `FormControlDirective`.
  *
- * ### Registering a single form control
+ * This directive is designed to be used as a standalone control.  Unlike `FormControlName`,
+ * it does not require that your `FormControl` instance be part of any parent
+ * `FormGroup`, and it won't be registered to any `FormGroupDirective` that
+ * exists above it.
  *
- * The following examples shows how to register a standalone control and set its value.
+ * **Get the value**: the `value` property is always synced and available on the
+ * `FormControl` instance. See a full list of available properties in
+ * `AbstractControl`.
+ *
+ * **Set the value**: You can pass in an initial value when instantiating the `FormControl`,
+ * or you can set it programmatically later using {@link AbstractControl#setValue setValue} or
+ * {@link AbstractControl#patchValue patchValue}.
+ *
+ * **Listen to value**: If you want to listen to changes in the value of the control, you can
+ * subscribe to the {@link AbstractControl#valueChanges valueChanges} event.  You can also listen to
+ * {@link AbstractControl#statusChanges statusChanges} to be notified when the validation status is
+ * re-calculated.
+ *
+ * ### Example
  *
  * {@example forms/ts/simpleFormControl/simple_form_control_example.ts region='Component'}
  *
@@ -60542,9 +60344,8 @@ var FormControlDirective = /** @class */ (function (_super) {
         /** @deprecated as of v6 */
         _this.update = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
         /**
-         * @description
          * Instance property used to track whether an ngModel warning has been sent out for this
-         * particular `FormControlDirective` instance. Used to support warning config of "always".
+         * particular FormControlDirective instance. Used to support warning config of "always".
          *
          * @internal
          */
@@ -60556,21 +60357,10 @@ var FormControlDirective = /** @class */ (function (_super) {
     }
     FormControlDirective_1 = FormControlDirective;
     Object.defineProperty(FormControlDirective.prototype, "isDisabled", {
-        /**
-         * @description
-         * Triggers a warning that this input should not be used with reactive forms.
-         */
         set: function (isDisabled) { ReactiveErrors.disabledAttrWarning(); },
         enumerable: true,
         configurable: true
     });
-    /**
-     * @description
-     * A lifecycle method called when the directive's inputs change. For internal use
-     * only.
-     *
-     * @param changes A object of key/value pairs for the set of changed inputs.
-     */
     FormControlDirective.prototype.ngOnChanges = function (changes) {
         if (this._isControlChanged(changes)) {
             setUpControl(this.form, this);
@@ -60586,31 +60376,16 @@ var FormControlDirective = /** @class */ (function (_super) {
         }
     };
     Object.defineProperty(FormControlDirective.prototype, "path", {
-        /**
-         * @description
-         * Returns an array that represents the path from the top-level form to this control.
-         * Each index is the string name of the control on that level.
-         */
         get: function () { return []; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(FormControlDirective.prototype, "validator", {
-        /**
-         * @description
-         * Synchronous validator function composed of all the synchronous validators
-         * registered with this directive.
-         */
         get: function () { return composeValidators(this._rawValidators); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(FormControlDirective.prototype, "asyncValidator", {
-        /**
-         * @description
-         * Async validator function composed of all the async validators registered with this
-         * directive.
-         */
         get: function () {
             return composeAsyncValidators(this._rawAsyncValidators);
         },
@@ -60618,20 +60393,10 @@ var FormControlDirective = /** @class */ (function (_super) {
         configurable: true
     });
     Object.defineProperty(FormControlDirective.prototype, "control", {
-        /**
-         * @description
-         * The `FormControl` bound to this directive.
-         */
         get: function () { return this.form; },
         enumerable: true,
         configurable: true
     });
-    /**
-     * @description
-     * Sets the new value for the view model and emits an `ngModelChange` event.
-     *
-     * @param newValue The new value for the view model.
-     */
     FormControlDirective.prototype.viewToModelUpdate = function (newValue) {
         this.viewModel = newValue;
         this.update.emit(newValue);
@@ -60641,7 +60406,6 @@ var FormControlDirective = /** @class */ (function (_super) {
     };
     var FormControlDirective_1;
     /**
-     * @description
      * Static property used to track whether any ngModel warnings have been sent across
      * all instances of FormControlDirective. Used to support warning config of "once".
      *
@@ -60698,13 +60462,24 @@ var formDirectiveProvider$1 = {
  * and `FormArray` instances to child `FormControlName`, `FormGroupName`,
  * and `FormArrayName` directives.
  *
- * @see [Reactive Forms Guide](guide/reactive-forms)
- * @see `AbstractControl`
+ * @usageNotes
+ * **Set value**: You can set the form's initial value when instantiating the
+ * `FormGroup`, or you can set it programmatically later using the `FormGroup`'s
+ * {@link AbstractControl#setValue setValue} or {@link AbstractControl#patchValue patchValue}
+ * methods.
  *
- * ### Register Form Group
+ * **Listen to value**: If you want to listen to changes in the value of the form, you can subscribe
+ * to the `FormGroup`'s {@link AbstractControl#valueChanges valueChanges} event.  You can also
+ * listen to its {@link AbstractControl#statusChanges statusChanges} event to be notified when the
+ * validation status is re-calculated.
  *
- * The following example registers a `FormGroup` with first name and last name controls,
- * and listens for the *ngSubmit* event when the button is clicked.
+ * Furthermore, you can listen to the directive's `ngSubmit` event to be notified when the user has
+ * triggered a form submission. The `ngSubmit` event will be emitted with the original form
+ * submission event.
+ *
+ * ### Example
+ *
+ * In this example, we create form controls for first name and last name.
  *
  * {@example forms/ts/simpleFormGroup/simple_form_group_example.ts region='Component'}
  *
@@ -60717,34 +60492,12 @@ var FormGroupDirective = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this._validators = _validators;
         _this._asyncValidators = _asyncValidators;
-        /**
-         * @description
-         * Reports whether the form submission has been triggered.
-         */
         _this.submitted = false;
-        /**
-         * @description
-         * Tracks the list of added `FormControlName` instances
-         */
         _this.directives = [];
-        /**
-         * @description
-         * Tracks the `FormGroup` bound to this directive.
-         */
         _this.form = null;
-        /**
-         * @description
-         * Emits an event when the form submission has been triggered.
-         */
         _this.ngSubmit = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
         return _this;
     }
-    /**
-     * @description
-     * A lifecycle method called when the directive's inputs change. For internal use only.
-     *
-     * @param changes A object of key/value pairs for the set of changed inputs.
-     */
     FormGroupDirective.prototype.ngOnChanges = function (changes) {
         this._checkFormPresent();
         if (changes.hasOwnProperty('form')) {
@@ -60754,40 +60507,20 @@ var FormGroupDirective = /** @class */ (function (_super) {
         }
     };
     Object.defineProperty(FormGroupDirective.prototype, "formDirective", {
-        /**
-         * @description
-         * Returns this directive's instance.
-         */
         get: function () { return this; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(FormGroupDirective.prototype, "control", {
-        /**
-         * @description
-         * Returns the `FormGroup` bound to this directive.
-         */
         get: function () { return this.form; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(FormGroupDirective.prototype, "path", {
-        /**
-         * @description
-         * Returns an array representing the path to this group. Because this directive
-         * always lives at the top level of a form, it always an empty array.
-         */
         get: function () { return []; },
         enumerable: true,
         configurable: true
     });
-    /**
-     * @description
-     * Method that sets up the control directive in this group, re-calculates its value
-     * and validity, and adds the instance to the internal list of directives.
-     *
-     * @param dir The `FormControlName` directive instance.
-     */
     FormGroupDirective.prototype.addControl = function (dir) {
         var ctrl = this.form.get(dir.path);
         setUpControl(ctrl, dir);
@@ -60795,100 +60528,33 @@ var FormGroupDirective = /** @class */ (function (_super) {
         this.directives.push(dir);
         return ctrl;
     };
-    /**
-     * @description
-     * Retrieves the `FormControl` instance from the provided `FormControlName` directive
-     *
-     * @param dir The `FormControlName` directive instance.
-     */
     FormGroupDirective.prototype.getControl = function (dir) { return this.form.get(dir.path); };
-    /**
-     * @description
-     * Removes the `FormControlName` instance from the internal list of directives
-     *
-     * @param dir The `FormControlName` directive instance.
-     */
     FormGroupDirective.prototype.removeControl = function (dir) { removeDir(this.directives, dir); };
-    /**
-     * Adds a new `FormGroupName` directive instance to the form.
-     *
-     * @param dir The `FormGroupName` directive instance.
-     */
     FormGroupDirective.prototype.addFormGroup = function (dir) {
         var ctrl = this.form.get(dir.path);
         setUpFormContainer(ctrl, dir);
         ctrl.updateValueAndValidity({ emitEvent: false });
     };
-    /**
-     * No-op method to remove the form group.
-     *
-     * @param dir The `FormGroupName` directive instance.
-     */
     FormGroupDirective.prototype.removeFormGroup = function (dir) { };
-    /**
-     * @description
-     * Retrieves the `FormGroup` for a provided `FormGroupName` directive instance
-     *
-     * @param dir The `FormGroupName` directive instance.
-     */
     FormGroupDirective.prototype.getFormGroup = function (dir) { return this.form.get(dir.path); };
-    /**
-     * Adds a new `FormArrayName` directive instance to the form.
-     *
-     * @param dir The `FormArrayName` directive instance.
-     */
     FormGroupDirective.prototype.addFormArray = function (dir) {
         var ctrl = this.form.get(dir.path);
         setUpFormContainer(ctrl, dir);
         ctrl.updateValueAndValidity({ emitEvent: false });
     };
-    /**
-     * No-op method to remove the form array.
-     *
-     * @param dir The `FormArrayName` directive instance.
-     */
     FormGroupDirective.prototype.removeFormArray = function (dir) { };
-    /**
-     * @description
-     * Retrieves the `FormArray` for a provided `FormArrayName` directive instance.
-     *
-     * @param dir The `FormArrayName` directive instance.
-     */
     FormGroupDirective.prototype.getFormArray = function (dir) { return this.form.get(dir.path); };
-    /**
-     * Sets the new value for the provided `FormControlName` directive.
-     *
-     * @param dir The `FormControlName` directive instance.
-     * @param value The new value for the directive's control.
-     */
     FormGroupDirective.prototype.updateModel = function (dir, value) {
         var ctrl = this.form.get(dir.path);
         ctrl.setValue(value);
     };
-    /**
-     * @description
-     * Method called with the "submit" event is triggered on the form.
-     * Triggers the `ngSubmit` emitter to emit the "submit" event as its payload.
-     *
-     * @param $event The "submit" event object
-     */
     FormGroupDirective.prototype.onSubmit = function ($event) {
         this.submitted = true;
         syncPendingControls(this.form, this.directives);
         this.ngSubmit.emit($event);
         return false;
     };
-    /**
-     * @description
-     * Method called when the "reset" event is triggered on the form.
-     */
     FormGroupDirective.prototype.onReset = function () { this.resetForm(); };
-    /**
-     * @description
-     * Resets the form to an initial value and resets its submitted status.
-     *
-     * @param value The new value for the form.
-     */
     FormGroupDirective.prototype.resetForm = function (value) {
         if (value === void 0) { value = undefined; }
         this.form.reset(value);
@@ -60964,42 +60630,37 @@ var formGroupNameProvider = {
  *
  * Syncs a nested `FormGroup` to a DOM element.
  *
- * This directive can only be used with a parent `FormGroupDirective`.
+ * This directive can only be used with a parent `FormGroupDirective` (selector:
+ * `[formGroup]`).
  *
- * It accepts the string name of the nested `FormGroup` to link, and
- * looks for a `FormGroup` registered with that name in the parent
+ * It accepts the string name of the nested `FormGroup` you want to link, and
+ * will look for a `FormGroup` registered with that name in the parent
  * `FormGroup` instance you passed into `FormGroupDirective`.
  *
- * Use nested form groups to validate a sub-group of a
- * form separately from the rest or to group the values of certain
+ * Nested form groups can come in handy when you want to validate a sub-group of a
+ * form separately from the rest or when you'd like to group the values of certain
  * controls into their own nested object.
  *
- * @see [Reactive Forms Guide](guide/reactive-forms)
- *
  * @usageNotes
+ * **Access the group**: You can access the associated `FormGroup` using the
+ * {@link AbstractControl#get get} method. Ex: `this.form.get('name')`.
  *
- * ### Access the group by name
+ * You can also access individual controls within the group using dot syntax.
+ * Ex: `this.form.get('name.first')`
  *
- * The following example uses the {@link AbstractControl#get get} method to access the
- * associated `FormGroup`
+ * **Get the value**: the `value` property is always synced and available on the
+ * `FormGroup`. See a full list of available properties in `AbstractControl`.
  *
- * ```ts
- *   this.form.get('name');
- * ```
+ * **Set the value**: You can set an initial value for each child control when instantiating
+ * the `FormGroup`, or you can set it programmatically later using
+ * {@link AbstractControl#setValue setValue} or {@link AbstractControl#patchValue patchValue}.
  *
- * ### Access individual controls in the group
+ * **Listen to value**: If you want to listen to changes in the value of the group, you can
+ * subscribe to the {@link AbstractControl#valueChanges valueChanges} event.  You can also listen to
+ * {@link AbstractControl#statusChanges statusChanges} to be notified when the validation status is
+ * re-calculated.
  *
- * The following example uses the {@link AbstractControl#get get} method to access
- * individual controls within the group using dot syntax.
- *
- * ```ts
- *   this.form.get('name.first');
- * ```
- *
- * ### Register a nested `FormGroup`.
- *
- * The following example registers a nested *name* `FormGroup` within an existing `FormGroup`,
- * and provides methods to retrieve the nested `FormGroup` and individual controls.
+ * ### Example
  *
  * {@example forms/ts/nestedFormGroup/nested_form_group_example.ts region='Component'}
  *
@@ -61050,10 +60711,31 @@ var formArrayNameProvider = {
  * will look for a `FormArray` registered with that name in the parent
  * `FormGroup` instance you passed into `FormGroupDirective`.
  *
- * @see [Reactive Forms Guide](guide/reactive-forms)
- * @see `AbstractControl`
+ * Nested form arrays can come in handy when you have a group of form controls but
+ * you're not sure how many there will be. Form arrays allow you to create new
+ * form controls dynamically.
  *
  * @usageNotes
+ * **Access the array**: You can access the associated `FormArray` using the
+ * {@link AbstractControl#get get} method on the parent `FormGroup`.
+ * Ex: `this.form.get('cities')`.
+ *
+ * **Get the value**: the `value` property is always synced and available on the
+ * `FormArray`. See a full list of available properties in `AbstractControl`.
+ *
+ * **Set the value**: You can set an initial value for each child control when instantiating
+ * the `FormArray`, or you can set the value programmatically later using the
+ * `FormArray`'s {@link AbstractControl#setValue setValue} or
+ * {@link AbstractControl#patchValue patchValue} methods.
+ *
+ * **Listen to value**: If you want to listen to changes in the value of the array, you can
+ * subscribe to the `FormArray`'s {@link AbstractControl#valueChanges valueChanges} event.
+ * You can also listen to its {@link AbstractControl#statusChanges statusChanges} event to be
+ * notified when the validation status is re-calculated.
+ *
+ * **Add new controls**: You can add new controls to the `FormArray` dynamically by calling
+ * its {@link FormArray#push push} method.
+ * Ex: `this.form.get('cities').push(new FormControl());`
  *
  * ### Example
  *
@@ -61071,39 +60753,21 @@ var FormArrayName = /** @class */ (function (_super) {
         _this._asyncValidators = asyncValidators;
         return _this;
     }
-    /**
-     * @description
-     * A lifecycle method called when the directive's inputs are initialized. For internal use only.
-     *
-     * @throws If the directive does not have a valid parent.
-     */
     FormArrayName.prototype.ngOnInit = function () {
         this._checkParentType();
         this.formDirective.addFormArray(this);
     };
-    /**
-     * @description
-     * A lifecycle method called before the directive's instance is destroyed. For internal use only.
-     */
     FormArrayName.prototype.ngOnDestroy = function () {
         if (this.formDirective) {
             this.formDirective.removeFormArray(this);
         }
     };
     Object.defineProperty(FormArrayName.prototype, "control", {
-        /**
-         * @description
-         * The `FormArray` bound to this directive.
-         */
         get: function () { return this.formDirective.getFormArray(this); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(FormArrayName.prototype, "formDirective", {
-        /**
-         * @description
-         * The top-level directive for this group if present, otherwise null.
-         */
         get: function () {
             return this._parent ? this._parent.formDirective : null;
         },
@@ -61111,30 +60775,16 @@ var FormArrayName = /** @class */ (function (_super) {
         configurable: true
     });
     Object.defineProperty(FormArrayName.prototype, "path", {
-        /**
-         * @description
-         * Returns an array that represents the path from the top-level form to this control.
-         * Each index is the string name of the control on that level.
-         */
         get: function () { return controlPath(this.name, this._parent); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(FormArrayName.prototype, "validator", {
-        /**
-         * @description
-         * Synchronous validator function composed of all the synchronous validators registered with this
-         * directive.
-         */
         get: function () { return composeValidators(this._validators); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(FormArrayName.prototype, "asyncValidator", {
-        /**
-         * @description
-         * Async validator function composed of all the async validators registered with this directive.
-         */
         get: function () {
             return composeAsyncValidators(this._asyncValidators);
         },
@@ -61177,19 +60827,42 @@ var controlNameBinding = {
 };
 /**
  * @description
+ *
  * Syncs a `FormControl` in an existing `FormGroup` to a form control
  * element by name.
  *
- * @see [Reactive Forms Guide](guide/reactive-forms)
- * @see `FormControl`
- * @see `AbstractControl`
+ * This directive ensures that any values written to the `FormControl`
+ * instance programmatically will be written to the DOM element (model -> view). Conversely,
+ * any values written to the DOM element through user input will be reflected in the
+ * `FormControl` instance (view -> model).
  *
  * @usageNotes
+ * This directive is designed to be used with a parent `FormGroupDirective` (selector:
+ * `[formGroup]`).
  *
- * ### Register `FormControl` within a group
+ * It accepts the string name of the `FormControl` instance you want to
+ * link, and will look for a `FormControl` registered with that name in the
+ * closest `FormGroup` or `FormArray` above it.
  *
- * The following example shows how to register multiple form controls within a form group
- * and set their value.
+ * **Access the control**: You can access the `FormControl` associated with
+ * this directive by using the {@link AbstractControl#get get} method.
+ * Ex: `this.form.get('first');`
+ *
+ * **Get value**: the `value` property is always synced and available on the `FormControl`.
+ * See a full list of available properties in `AbstractControl`.
+ *
+ *  **Set value**: You can set an initial value for the control when instantiating the
+ *  `FormControl`, or you can set it programmatically later using
+ *  {@link AbstractControl#setValue setValue} or {@link AbstractControl#patchValue patchValue}.
+ *
+ * **Listen to value**: If you want to listen to changes in the value of the control, you can
+ * subscribe to the {@link AbstractControl#valueChanges valueChanges} event.  You can also listen to
+ * {@link AbstractControl#statusChanges statusChanges} to be notified when the validation status is
+ * re-calculated.
+ *
+ * ### Example
+ *
+ * In this example, we create form controls for first name and last name.
  *
  * {@example forms/ts/simpleFormGroup/simple_form_group_example.ts region='Component'}
  *
@@ -61281,7 +60954,6 @@ var FormControlName = /** @class */ (function (_super) {
         /** @deprecated as of v6 */
         _this.update = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
         /**
-         * @description
          * Instance property used to track whether an ngModel warning has been sent out for this
          * particular FormControlName instance. Used to support warning config of "always".
          *
@@ -61296,20 +60968,10 @@ var FormControlName = /** @class */ (function (_super) {
     }
     FormControlName_1 = FormControlName;
     Object.defineProperty(FormControlName.prototype, "isDisabled", {
-        /**
-         * @description
-         * Triggers a warning that this input should not be used with reactive forms.
-         */
         set: function (isDisabled) { ReactiveErrors.disabledAttrWarning(); },
         enumerable: true,
         configurable: true
     });
-    /**
-     * @description
-     * A lifecycle method called when the directive's inputs change. For internal use only.
-     *
-     * @param changes A object of key/value pairs for the set of changed inputs.
-     */
     FormControlName.prototype.ngOnChanges = function (changes) {
         if (!this._added)
             this._setUpControl();
@@ -61319,62 +60981,31 @@ var FormControlName = /** @class */ (function (_super) {
             this.formDirective.updateModel(this, this.model);
         }
     };
-    /**
-     * @description
-     * Lifecycle method called before the directive's instance is destroyed. For internal use only.
-     *
-     * @param changes A object of key/value pairs for the set of changed inputs.
-     */
     FormControlName.prototype.ngOnDestroy = function () {
         if (this.formDirective) {
             this.formDirective.removeControl(this);
         }
     };
-    /**
-     * @description
-     * Sets the new value for the view model and emits an `ngModelChange` event.
-     *
-     * @param newValue The new value for the view model.
-     */
     FormControlName.prototype.viewToModelUpdate = function (newValue) {
         this.viewModel = newValue;
         this.update.emit(newValue);
     };
     Object.defineProperty(FormControlName.prototype, "path", {
-        /**
-         * @description
-         * Returns an array that represents the path from the top-level form to this control.
-         * Each index is the string name of the control on that level.
-         */
         get: function () { return controlPath(this.name, this._parent); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(FormControlName.prototype, "formDirective", {
-        /**
-         * @description
-         * The top-level directive for this group if present, otherwise null.
-         */
         get: function () { return this._parent ? this._parent.formDirective : null; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(FormControlName.prototype, "validator", {
-        /**
-         * @description
-         * Synchronous validator function composed of all the synchronous validators
-         * registered with this directive.
-         */
         get: function () { return composeValidators(this._rawValidators); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(FormControlName.prototype, "asyncValidator", {
-        /**
-         * @description
-         * Async validator function composed of all the async validators registered with this
-         * directive.
-         */
         get: function () {
             return composeAsyncValidators(this._rawAsyncValidators);
         },
@@ -61401,7 +61032,6 @@ var FormControlName = /** @class */ (function (_super) {
     };
     var FormControlName_1;
     /**
-     * @description
      * Static property used to track whether any ngModel warnings have been sent across
      * all instances of FormControlName. Used to support warning config of "once".
      *
@@ -61864,7 +61494,7 @@ var FormBuilder = /** @class */ (function () {
 /**
  * @publicApi
  */
-var VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["Version"]('7.0.4');
+var VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["Version"]('7.0.2');
 
 /**
  * @license
@@ -62090,7 +61720,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm5/common.js");
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
 /**
- * @license Angular v7.0.4
+ * @license Angular v7.0.2
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -62527,7 +62157,7 @@ var CachedResourceLoader = /** @class */ (function (_super) {
 /**
  * @publicApi
  */
-var VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["Version"]('7.0.4');
+var VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["Version"]('7.0.2');
 
 /**
  * @license
@@ -62637,7 +62267,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm5/common.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /**
- * @license Angular v7.0.4
+ * @license Angular v7.0.2
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -65110,7 +64740,7 @@ var By = /** @class */ (function () {
 /**
  * @publicApi
  */
-var VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_2__["Version"]('7.0.4');
+var VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_2__["Version"]('7.0.2');
 
 /**
  * @license
@@ -65227,7 +64857,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm5/common.js");
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm5/platform-browser.js");
 /**
- * @license Angular v7.0.4
+ * @license Angular v7.0.2
  * (c) 2010-2018 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -65257,9 +64887,7 @@ __webpack_require__.r(__webpack_exports__);
  * ```
  * class MyService {
  *   constructor(public router: Router, logger: Logger) {
- *     router.events.pipe(
- *       filter(e => e instanceof RouterEvent)
- *     ).subscribe(e => {
+ *     router.events.filter(e => e instanceof RouterEvent).subscribe(e => {
  *       logger.log(e.id, e.url);
  *     });
  *   }
@@ -68102,8 +67730,8 @@ function getRouteGuards(futureNode, currNode, parentContexts, futurePath, checks
             getChildRouteGuards(futureNode, currNode, parentContexts, futurePath, checks);
         }
         if (shouldRun) {
-            var component = context && context.outlet && context.outlet.component || null;
-            checks.canDeactivateChecks.push(new CanDeactivate(component, curr));
+            var outlet = context.outlet;
+            checks.canDeactivateChecks.push(new CanDeactivate(outlet.component, curr));
         }
     }
     else {
@@ -68568,9 +68196,9 @@ function getResolve(route) {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-function recognize$1(rootComponentType, config, serializer, paramsInheritanceStrategy, relativeLinkResolution) {
+function recognize$1(rootComponentType, config, serializer, paramsInheritanceStrategy) {
     return function (source) {
-        return source.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["mergeMap"])(function (t) { return recognize(rootComponentType, config, t.urlAfterRedirects, serializer(t.urlAfterRedirects), paramsInheritanceStrategy, relativeLinkResolution)
+        return source.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["mergeMap"])(function (t) { return recognize(rootComponentType, config, t.urlAfterRedirects, serializer(t.urlAfterRedirects), paramsInheritanceStrategy)
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (targetSnapshot) { return (Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])({}, t, { targetSnapshot: targetSnapshot })); })); }));
     };
 }
@@ -68950,7 +68578,7 @@ var Router = /** @class */ (function () {
                     // ApplyRedirects
                     applyRedirects$1(_this.ngModule.injector, _this.configLoader, _this.urlSerializer, _this.config), 
                     // Recognize
-                    recognize$1(_this.rootComponentType, _this.config, function (url) { return _this.serializeUrl(url); }, _this.paramsInheritanceStrategy, _this.relativeLinkResolution), 
+                    recognize$1(_this.rootComponentType, _this.config, function (url) { return _this.serializeUrl(url); }, _this.paramsInheritanceStrategy), 
                     // Fire RoutesRecognized
                     Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(function (t) {
                         var routesRecognized = new RoutesRecognized(t.id, _this.serializeUrl(t.extractedUrl), _this.serializeUrl(t.urlAfterRedirects), t.targetSnapshot);
@@ -70744,7 +70372,7 @@ function provideRouterInitializer() {
 /**
  * @publicApi
  */
-var VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["Version"]('7.0.4');
+var VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["Version"]('7.0.2');
 
 /**
  * @license

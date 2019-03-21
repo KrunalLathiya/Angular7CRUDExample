@@ -270,8 +270,8 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 var BusinessService = /** @class */ (function () {
     function BusinessService(http) {
         this.http = http;
-        this.uri = 'http://localhost:4000/business';
-        this.versionuri = 'http://localhost:4000/getversion';
+        this.uri = '/business';
+        this.versionuri = '/getversion';
     }
     BusinessService.prototype.addBusiness = function (person_name, business_name, business_gst_number) {
         var obj = {
